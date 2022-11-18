@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">μWeather</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+    <string name="date_text_format_12h">hh:mm:ss a</string>
+    <string name="date_text_format_24h">HH:mm:ss</string>
+    <string name="time_default">13:37:69</string>
+</resources>
