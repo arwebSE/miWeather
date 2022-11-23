@@ -59,7 +59,9 @@ class MiWeatherWidget : AppWidgetProvider() {
 
         // Construct the RemoteViews object
         val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
-        //views.setTextViewText(R.id.textViewTime, currentTime)
+
+        val rez = apiCall(context)
+        views.setTextViewText(R.id.cTempView, rez)
 
         // launch pending intent to increase value stored in shared prefs
         views.setOnClickPendingIntent(R.id.refreshButton, pendingIntent(context, "refresh"))
@@ -74,12 +76,12 @@ class MiWeatherWidget : AppWidgetProvider() {
 
         // return pending intent
         return PendingIntent.getBroadcast(
-            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT  or PendingIntent.FLAG_MUTABLE
         )
     }
 
 
-    private fun apiCall(context: Context) {
+    private fun apiCall(context: Context): String {
         Log.d("MIWEATHER", "inside apiCall")
 
         val apiUrl = "https://miel-api.arwebse.repl.co"
@@ -94,41 +96,53 @@ class MiWeatherWidget : AppWidgetProvider() {
             .url(url)
             .build()
 
-        httpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-            }
+        val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
+        views.setTextViewText(R.id.cTempView, "asdd")
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+        //updateWidgets(context)
 
-//                    for ((name, value) in response.headers) {
-//                        println("$name: $value")
-//                    }
+        return "test"
 
-                    Log.d("MIWEATHER", "got successfull response!")
+        Log.d("MIWEATHER", "set cTempView to 0")
 
-                    val jsonData = response.body!!.string()
-                    val result = Klaxon().toJsonString(jsonData)
-
-                    Log.d("MIWEATHER", "result: $result")
-
-                    //println(response.body!!.string())
-
-                    //el.cTemp.innerHTML = Math.round(res.current.temp);
-                    // get widget text from shared prefs
-                    //val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-                    //val tempString = prefs.getString("temperature", "x")
-
-                    val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
-                    views.setTextViewText(R.id.cTempView, "0")
-                    updateWidgets(context)
-
-                    Log.d("MIWEATHER", "set cTempView to 0")
-                }
-            }
-        })
+//        httpClient.newCall(request).enqueue(object : Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                e.printStackTrace()
+//            }
+//
+//            override fun onResponse(call: Call, response: Response) {
+//                response.use {
+//                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+//
+////                    for ((name, value) in response.headers) {
+////                        println("$name: $value")
+////                    }
+//
+//                    Log.d("MIWEATHER", "got successfull response!")
+//
+//                    val jsonData = response.body!!.string()
+//                    val rezz = Klaxon().parse<Any>(jsonData)
+//
+//                    //Log.d("MIWEATHER", "result: ${rezz.geo!!}") <<--- ENDED HERE FMLasd
+//
+//                    //println(response.body!!.string())
+//
+//                    //el.cTemp.innerHTML = Math.round(res.current.temp);
+//                    // get widget text from shared prefs
+//                    //val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+//                    //val tempString = prefs.getString("temperature", "x")
+//
+//                    val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
+//                    views.setTextViewText(R.id.cTempView, "0dasdasd")
+//                    //updateWidgets(context)
+//
+//                    // Instruct the widget manager to update the widget
+//                    appWidgetManager.updateAppWidget(appWidgetId, views)
+//
+//                    Log.d("MIWEATHER", "set cTempView to 0")
+//                }
+//            }
+//        })
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -149,9 +163,6 @@ class MiWeatherWidget : AppWidgetProvider() {
 
             val cTime = LocalDateTime.now()
             Log.d("MIWEATHER", "Time: $cTime")
-
-            apiCall(context)
-
 
             // update widgets
             updateWidgets(context)
