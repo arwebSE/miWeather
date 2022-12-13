@@ -9,19 +9,20 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import org.json.JSONObject
 import okhttp3.*
+import org.json.JSONTokener
 import java.io.IOException
+import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * Implementation of App Widget functionality.
  */
-@JsonClass(generateAdapter = true)
 class MiWeatherWidget : AppWidgetProvider() {
+    private var jsonData: JSONObject? = null
 
     override fun onEnabled(context: Context) {
         // Enter relevant functionality for when the first widget is created
@@ -59,14 +60,17 @@ class MiWeatherWidget : AppWidgetProvider() {
         // Construct the RemoteViews object
         val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
 
-
-        apiCall(context)
+        views.setTextViewText(R.id.cTempView, "asd")
 
         // launch pending intent to increase value stored in shared prefs
         views.setOnClickPendingIntent(R.id.refreshButton, pendingIntent(context, "refresh"))
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views)
+        apiCall(context) {
+            val currentTemp = jsonData?.getJSONObject("current")?.getDouble("temp")?.roundToInt()
+            views.setTextViewText(R.id.cTempView, "$currentTemp\u2103")
+            // Instruct the widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        }
     }
 
     private fun pendingIntent(context: Context?, action: String): PendingIntent? {
@@ -79,13 +83,7 @@ class MiWeatherWidget : AppWidgetProvider() {
         )
     }
 
-    private fun updateTemp(context: Context) {
-        // Construct the RemoteViews object
-        val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
-        views.setTextViewText(R.id.cTempView, "pidar")
-    }
-
-    private fun apiCall(context: Context) {
+    private fun apiCall(context: Context, callback: () -> Unit) {
         Log.d("MIWEATHER", "inside apiCall")
 
         val apiUrl = "https://miel-api.arwebse.repl.co"
@@ -95,10 +93,7 @@ class MiWeatherWidget : AppWidgetProvider() {
         val id = "android"
 
         val url = "$apiUrl/weather?q=$city&verify=$verify&freedom=$freedom&id=$id";
-
         val request = Request.Builder().url(url).build()
-
-        Log.d("MIWEATHER", "set cTempView to 0")
 
         val okHttpClient = OkHttpClient()
         okHttpClient.newCall(request).enqueue(object : Callback {
@@ -110,39 +105,17 @@ class MiWeatherWidget : AppWidgetProvider() {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-//                    for ((name, value) in response.headers) {
-//                        println("$name: $value")
-//                    }
-
                     Log.d("MIWEATHER", "got successful response!")
 
                     // Parse the JSON string into an object
-                    val jsonData = response.body!!.string()
-                    val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-                    val jsonAdapter = moshi.adapter(Any::class.java)
-                    val weatherData = jsonAdapter.fromJson(jsonData)
+                    val body = response.body!!.string()
+                    jsonData = JSONTokener(body).nextValue() as JSONObject
 
-                    // Create a JsonReader instance
-                    val newmoshi = Moshi.reader
-                    val jsonReader = moshi.reader().apply { isLenient = true }
+//                    val current = jsonData.getJSONObject("current")
+//                    val cTemp = current.getString("temp")
 
-                    // Parse the nested object directly
-                    jsonReader.beginObject()
-                    jsonReader.nextName()
-                    val nestedObject = jsonReader.readJsonValue()
-
-                    // Access the object of an object
-                    Log.d("MIWEATHER", "got temp: ${nestedObject.current.temp}")
-
-                    //el.cTemp.innerHTML = Math.round(res.current.temp);
-
-                    // get widget text from shared prefs
-                    val prefs =
-                        context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-                    val tempString = prefs.getString("temperature", "x")
-
+                    callback()
                 }
-
             }
         })
     }
@@ -166,8 +139,8 @@ class MiWeatherWidget : AppWidgetProvider() {
             val cTime = LocalDateTime.now()
             Log.d("MIWEATHER", "Time: $cTime")
 
-            // update widgets
             updateWidgets(context)
+
         }
     }
 
