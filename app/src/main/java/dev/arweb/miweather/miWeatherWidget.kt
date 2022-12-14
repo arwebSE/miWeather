@@ -7,15 +7,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
 import org.json.JSONObject
 import okhttp3.*
 import org.json.JSONTokener
 import java.io.IOException
-import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 /**
@@ -60,14 +59,21 @@ class MiWeatherWidget : AppWidgetProvider() {
         // Construct the RemoteViews object
         val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
 
-        views.setTextViewText(R.id.cTempView, "asd")
-
         // launch pending intent to increase value stored in shared prefs
         views.setOnClickPendingIntent(R.id.refreshButton, pendingIntent(context, "refresh"))
 
+        views.setInt(R.id.loadingView, "setVisibility", View.VISIBLE) // make btn invis
+
+        showLoading(context)
         apiCall(context) {
             val currentTemp = jsonData?.getJSONObject("current")?.getDouble("temp")?.roundToInt()
             views.setTextViewText(R.id.cTempView, "$currentTemp\u2103")
+
+            // val current = jsonData.getJSONObject("current")
+            // val cTemp = current.getString("temp")
+
+            views.setInt(R.id.loadingView, "setVisibility", View.INVISIBLE) // make btn visible
+
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
@@ -83,9 +89,13 @@ class MiWeatherWidget : AppWidgetProvider() {
         )
     }
 
-    private fun apiCall(context: Context, callback: () -> Unit) {
-        Log.d("MIWEATHER", "inside apiCall")
+    private fun showLoading(context: Context) {
+        val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
+        views.setInt(R.id.loadingView, "setVisibility", View.VISIBLE) // make btn vis
+    }
 
+    private fun apiCall(context: Context, callback: () -> Unit) {
+        //showLoading(context)
         val apiUrl = "https://miel-api.arwebse.repl.co"
         val city = "stockholm"
         val verify = "5ecf486e3b8d878a4a87"
@@ -104,16 +114,9 @@ class MiWeatherWidget : AppWidgetProvider() {
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
-
-                    Log.d("MIWEATHER", "got successful response!")
-
                     // Parse the JSON string into an object
                     val body = response.body!!.string()
                     jsonData = JSONTokener(body).nextValue() as JSONObject
-
-//                    val current = jsonData.getJSONObject("current")
-//                    val cTemp = current.getString("temp")
-
                     callback()
                 }
             }
@@ -126,21 +129,14 @@ class MiWeatherWidget : AppWidgetProvider() {
         val action = intent!!.action ?: ""
 
         if (context != null && action == "refresh") {
-            Log.d("MIWEATHER", "got refresh request")
-            // refresh weather data
-
             val views = RemoteViews(context.packageName, R.layout.mi_weather_widget)
-            views.setInt(
-                R.id.refreshButton, "setImageDrawable",
-                R.drawable.ic_launcher_foreground
-            )
-            views.setInt(R.id.refreshButton, "setImageAlpha", 50)
+            // launch pending intent to increase value stored in shared prefs
+            views.setOnClickPendingIntent(R.id.refreshButton, pendingIntent(context, "refresh"))
 
             val cTime = LocalDateTime.now()
             Log.d("MIWEATHER", "Time: $cTime")
 
             updateWidgets(context)
-
         }
     }
 
