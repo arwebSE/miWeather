@@ -63,38 +63,72 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/clockView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:gravity="center">
 
-        <TextView
-            android:id="@+id/cTempView"
+        <LinearLayout
+            android:id="@+id/tempViews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="bottom|center_horizontal"
-            android:text="@string/temperature"
-            android:textColor="@android:color/white"
-            android:textSize="60sp"
-            android:textStyle="bold" />
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:gravity="right"
+            android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/weatherIcon"
-            android:layout_width="50dp"
+            <TextView
+                android:id="@+id/maxTempView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-2℃"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/minTempView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-20℃"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/weatherInfo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:src="@drawable/weather_13d"
-            android:layout_marginLeft="10dp"/>
-    </LinearLayout>
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@+id/tempViews"
+            android:gravity="center"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/cTempView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/temperature"
+                android:textColor="@android:color/white"
+                android:textSize="60sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/weatherIcon"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:contentDescription="A weather icon"
+                android:src="@drawable/weather_13d" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
