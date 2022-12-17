@@ -10,8 +10,9 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
-import org.json.JSONObject
 import okhttp3.*
+import org.json.JSONArray
+import org.json.JSONObject
 import org.json.JSONTokener
 import java.io.IOException
 import java.time.LocalDateTime
@@ -62,17 +63,24 @@ class MiWeatherWidget : AppWidgetProvider() {
         // launch pending intent to increase value stored in shared prefs
         views.setOnClickPendingIntent(R.id.refreshButton, pendingIntent(context, "refresh"))
 
-        views.setInt(R.id.loadingView, "setVisibility", View.VISIBLE) // make btn invis
+        //views.setInt(R.id.loadingView, "setVisibility", View.VISIBLE) // make btn invis
 
         showLoading(context)
         apiCall(context) {
             val currentTemp = jsonData?.getJSONObject("current")?.getDouble("temp")?.roundToInt()
+            val currentIcon = JSONObject(
+                JSONArray(
+                    jsonData?.getJSONObject("current")?.getString("weather")
+                )[0].toString()
+            ).getString("icon")
             views.setTextViewText(R.id.cTempView, "$currentTemp\u2103")
+            val weatherId: Int = context.resources.getIdentifier("weather_$currentIcon", "drawable", context.packageName)
+            views.setImageViewResource(R.id.weatherIcon, weatherId)
 
             // val current = jsonData.getJSONObject("current")
             // val cTemp = current.getString("temp")
 
-            views.setInt(R.id.loadingView, "setVisibility", View.INVISIBLE) // make btn visible
+            //views.setInt(R.id.loadingView, "setVisibility", View.INVISIBLE) // make btn visible
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views)

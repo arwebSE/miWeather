@@ -62,45 +62,39 @@
         <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="invisible"/>
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="272dp"
-        android:layout_height="175dp"
+    <LinearLayout
+        android:layout_below="@+id/clockView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/cTempView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
             android:fontFamily="@font/inter_bold"
-            android:gravity="center"
+            android:gravity="bottom|center_horizontal"
             android:text="@string/temperature"
-            android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="60sp"
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
+            android:id="@+id/weatherIcon"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            app:srcCompat="@drawable/weather_01d" />
-
-    </RelativeLayout>
+            android:gravity="center_horizontal"
+            android:src="@drawable/weather_13d"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
 
 
 </RelativeLayout>

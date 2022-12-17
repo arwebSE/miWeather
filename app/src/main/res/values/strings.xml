@@ -3,7 +3,7 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
-    <string name="time_format_12h">hh:mm:ss a</string>
+    <string name="time_format_12h">hh:mm a</string>
     <string name="time_format_24h">HH:mm</string>
     <string name="date_format_12h">MM/dd/yyyy</string>
     <string name="date_format_24h">yyyy-MM-dd</string>
