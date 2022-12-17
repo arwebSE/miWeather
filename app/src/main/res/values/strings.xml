@@ -1,13 +1,16 @@
 <resources>
     <string name="app_name">μWeather</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
-    <string name="app_widget_description">This is an app widget description</string>
-    <string name="time_format_12h">hh:mm a</string>
+    <string name="add_widget">Add μWeather widget</string>
+    <string name="app_widget_description">A beautiful weather clock widget</string>
+    <string name="time_format_12h">h:mm a</string>
     <string name="time_format_24h">HH:mm</string>
     <string name="date_format_12h">MM/dd/yyyy</string>
     <string name="date_format_24h">yyyy-MM-dd</string>
     <string name="time_default">13:37</string>
     <string name="date_default">06/09/1969</string>
-    <string name="temperature">-°C</string>
+    <string name="temp_default">-°C</string>
+    <string name="weather_icon_desc">A weather icon</string>
+    <string name="arrow_down_desc">A blue arrow pointing downwards</string>
+    <string name="arrow_up_desc">A red arrow pointing upwards</string>
+    <string name="refresh_button_desc">A round refresh button</string>
 </resources>

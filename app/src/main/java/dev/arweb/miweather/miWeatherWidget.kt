@@ -66,19 +66,29 @@ class MiWeatherWidget : AppWidgetProvider() {
         //views.setInt(R.id.loadingView, "setVisibility", View.VISIBLE) // make btn invis
 
         showLoading(context)
-        apiCall(context) {
+        apiCall {
+            // Setup current temp
             val currentTemp = jsonData?.getJSONObject("current")?.getDouble("temp")?.roundToInt()
+            views.setTextViewText(R.id.cTempView, "$currentTemp\u2103")
+
+            // Setup min/max temp
+            val minTemp = jsonData?.getJSONArray("daily")?.getJSONObject(0)?.getJSONObject("temp")?.getDouble("min")?.roundToInt()
+            val maxTemp = jsonData?.getJSONArray("daily")?.getJSONObject(0)?.getJSONObject("temp")?.getDouble("max")?.roundToInt()
+            views.setTextViewText(R.id.minTempText, "$minTemp\u2103")
+            views.setTextViewText(R.id.maxTempText, "$maxTemp\u2103")
+
+            // Setup weather icon
             val currentIcon = JSONObject(
                 JSONArray(
                     jsonData?.getJSONObject("current")?.getString("weather")
                 )[0].toString()
             ).getString("icon")
-            views.setTextViewText(R.id.cTempView, "$currentTemp\u2103")
-            val weatherId: Int = context.resources.getIdentifier("weather_$currentIcon", "drawable", context.packageName)
+            val weatherId: Int = context.resources.getIdentifier(
+                "weather_$currentIcon",
+                "drawable",
+                context.packageName
+            )
             views.setImageViewResource(R.id.weatherIcon, weatherId)
-
-            // val current = jsonData.getJSONObject("current")
-            // val cTemp = current.getString("temp")
 
             //views.setInt(R.id.loadingView, "setVisibility", View.INVISIBLE) // make btn visible
 
@@ -102,7 +112,7 @@ class MiWeatherWidget : AppWidgetProvider() {
         views.setInt(R.id.loadingView, "setVisibility", View.VISIBLE) // make btn vis
     }
 
-    private fun apiCall(context: Context, callback: () -> Unit) {
+    private fun apiCall(callback: () -> Unit) {
         //showLoading(context)
         val apiUrl = "https://miel-api.arwebse.repl.co"
         val city = "stockholm"
